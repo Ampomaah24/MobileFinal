@@ -1,0 +1,11 @@
+{
+  "ndk": "/Users/afdmin/Library/Android/sdk/ndk/29.0.13113456",
+  "revision": {
+    "mMajor": 29,
+    "mMinor": 0,
+    "mMicro": 13113456,
+    "mPreview": 0,
+    "mPrecision": "MICRO",
+    "mPreviewSeparator": " "
+  }
+}
