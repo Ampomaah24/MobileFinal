@@ -6,7 +6,7 @@ class AppTheme {
   // Prevent instantiation
   AppTheme._();
   
-  // Brand colors
+
   static const Color primaryColor = Color(0xFF5B37B7);  // Purple
   static const Color secondaryColor = Color(0xFF00C6AD); // Teal
   static const Color accentColor = Color(0xFFFF9500);    // Orange
@@ -335,7 +335,7 @@ class AppTheme {
         color: textColor,
       ),
       
-      // Headline
+
       headlineLarge: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.w700,

@@ -1,11 +1,10 @@
-// lib/core/models/booking_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookingModel {
   final String id;
   final String userId;
   final String eventId;
-  final String status; // 'Confirmed', 'Pending', 'Cancelled', 'Completed'
+  final String status; 
   final DateTime bookingDate;
   final int ticketCount;
   final double totalAmount;
@@ -51,7 +50,7 @@ class BookingModel {
     );
   }
 
-  // Alternative factory method for compatibility with admin screens
+
   factory BookingModel.fromMap2(Map<String, dynamic> map) {
     return BookingModel(
       id: map['id'] ?? '',
@@ -90,7 +89,7 @@ class BookingModel {
     };
   }
 
-  // Create a copy of the booking with updated fields
+
   BookingModel copyWith({
     String? status,
     Map<String, dynamic>? eventData,

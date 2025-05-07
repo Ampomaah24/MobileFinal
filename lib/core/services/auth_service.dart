@@ -463,7 +463,40 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+Future<UserModel?> registerWithEmailAndPassword(
+  String email, 
+  String password,
+  String name,
+  bool isAdmin
+) async {
+  try {
+    // Create authentication account
+    final userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    
+    // Create user profile
+    if (userCredential.user != null) {
+      final user = UserModel(
+        uid: userCredential.user!.uid,
+        email: email,
+        name: name,
+        isAdmin: isAdmin,
+        profileImageUrl: '',
+        createdAt: DateTime.now(),
+      );
+      
+      // Save user to database
+      await _firestore.collection('users').doc(user.uid).set(user.toMap());
+      return user;
+    }
+    return null;
+  } catch (e) {
+    _error = e.toString();
+    return null;
+  }
+}
   // Check if email is verified
   Future<bool> checkEmailVerified() async {
     if (_auth.currentUser == null) {

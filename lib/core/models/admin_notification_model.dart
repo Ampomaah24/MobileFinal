@@ -1,4 +1,3 @@
-// lib/core/models/admin_notification_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum AdminNotificationType {
@@ -18,8 +17,8 @@ class AdminNotificationModel {
   final AdminNotificationType type;
   final DateTime createdAt;
   final bool isRead;
-  final String? entityId; // userId, bookingId, eventId, etc.
-  final String? entityType; // 'user', 'booking', 'event', etc.
+  final String? entityId; 
+  final String? entityType; 
   final Map<String, dynamic>? additionalData;
 
   AdminNotificationModel({

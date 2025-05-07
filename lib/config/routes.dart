@@ -30,7 +30,7 @@ import '../presentation/screens/admin/admin_user_details_screen.dart';
 import '../presentation/screens/admin/event_form_screen.dart';
 
 class AppRoutes {
-  // Route names
+  
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
@@ -40,7 +40,7 @@ class AppRoutes {
   static const String eventDetails = '/event-details';
   static const String eventMap = '/event-map';
   static const String booking = '/booking';
-  static const String payment = '/payment';  // Add this route name
+  static const String payment = '/payment';  
   static const String bookingConfirmation = '/booking-confirmation';
   static const String bookingHistory = '/booking-history';
   static const String profile = '/profile';
@@ -52,7 +52,7 @@ class AppRoutes {
   static const String adminAnalytics = '/admin/analytics';
   static const String adminSettings = '/admin/settings';
   
-  // Routes map for MaterialApp - make sure all routes are correctly defined
+  
   static final Map<String, WidgetBuilder> routes = {
     splash: (context) => const SplashScreen(),
     login: (context) => const LoginScreen(),
@@ -71,7 +71,7 @@ class AppRoutes {
     adminSettings: (context) => const AdminSettingsScreen(),
   };
   
-  // Route generator
+ 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     print("Generating route for: ${settings.name}");
     
@@ -153,7 +153,7 @@ class AppRoutes {
     }
   }
   
-  // Page transition
+  // Page transitioning
   static Route<dynamic> _buildPageTransition(
     Widget page, 
     RouteSettings settings, 

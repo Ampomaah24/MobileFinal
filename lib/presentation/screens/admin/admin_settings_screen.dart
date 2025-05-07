@@ -23,7 +23,6 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
   String _defaultCurrency = 'GHS';
   int _sessionTimeout = 30;
   bool _maintenanceMode = false;
-  bool _requireEmailVerification = true;
   
   @override
   void initState() {
@@ -157,108 +156,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                             });
                           },
                         ),
-                        _buildSwitchSetting(
-                          'Maintenance Mode',
-                          'Put app in maintenance mode (users will see maintenance screen)',
-                          _maintenanceMode,
-                          (value) {
-                            setState(() {
-                              _maintenanceMode = value;
-                            });
-                          },
-                        ),
-                        _buildSwitchSetting(
-                          'Require Email Verification',
-                          'Users must verify email before booking events',
-                          _requireEmailVerification,
-                          (value) {
-                            setState(() {
-                              _requireEmailVerification = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    _buildSection(
-                      'Advanced Settings',
-                      [
-                        _buildButtonSetting(
-                          'Clear App Cache',
-                          'Delete temporary files and cached data',
-                          Icons.cleaning_services,
-                          Colors.blue,
-                          () {
-                            _showConfirmationDialog(
-                              'Clear Cache',
-                              'Are you sure you want to clear app cache?',
-                              () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Cache cleared')),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        _buildButtonSetting(
-                          'Reset App Settings',
-                          'Restore default settings',
-                          Icons.restore,
-                          Colors.orange,
-                          () {
-                            _showConfirmationDialog(
-                              'Reset Settings',
-                              'Are you sure you want to reset all settings to default values?',
-                              () {
-                                // Reset theme
-                                themeProvider.setDarkMode(false);
-                                
-                                setState(() {
-                                  _enableNotifications = true;
-                                  _enableLocationServices = true;
-                                  _defaultCurrency = 'GHS';
-                                  _sessionTimeout = 30;
-                                  _maintenanceMode = false;
-                                  _requireEmailVerification = true;
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Settings reset to defaults')),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        _buildButtonSetting(
-                          'Export App Data',
-                          'Export app data to CSV files',
-                          Icons.ios_share,
-                          Colors.green,
-                          () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Exporting data...')),
-                            );
-                          },
-                        ),
-                        _buildButtonSetting(
-                          'Clear All Data',
-                          'Delete all app data (events, users, bookings)',
-                          Icons.delete_forever,
-                          Colors.red,
-                          () {
-                            _showConfirmationDialog(
-                              'Clear All Data',
-                              'WARNING: This will delete ALL app data including users, events, and bookings. This action cannot be undone!',
-                              () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('This would delete all data (not implemented)'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
+                        
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -378,25 +276,6 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
           onChanged: onChanged,
         ),
       ],
-    );
-  }
-
-  Widget _buildButtonSetting(
-    String title,
-    String subtitle,
-    IconData icon,
-    Color color,
-    VoidCallback onPressed,
-  ) {
-    return ListTile(
-      leading: Icon(icon, color: color),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: TextButton(
-        onPressed: onPressed,
-        child: const Text('Execute'),
-      ),
-      contentPadding: EdgeInsets.zero,
     );
   }
 

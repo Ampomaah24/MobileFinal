@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/booking_model.dart';
 import '../models/event_model.dart';
 import '../models/user_model.dart';
 import 'event_service.dart';
 import 'notification_service.dart';
 import 'user_service.dart';
+import 'cache_service.dart';
+import 'connectivity_service.dart';
 
 class BookingService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -17,9 +22,15 @@ class BookingService extends ChangeNotifier {
   List<BookingModel> _bookings = [];
   bool _isLoading = false;
   String? _error;
+  BuildContext? _context;
   
   // Fixed constructor to match the parameter order used in app.dart
   BookingService(this._eventService, [this._notificationService, this._userService]);
+  
+  // Set the context for connectivity checks
+  void setContext(BuildContext context) {
+    _context = context;
+  }
   
   // Getters
   List<BookingModel> get bookings => _bookings;
@@ -32,6 +43,48 @@ class BookingService extends ChangeNotifier {
     notifyListeners();
   }
   
+  void _cacheBookings(String userId) {
+    try {
+      // Convert bookings to Maps for storage
+      final bookingMaps = _bookings.map((booking) {
+        final map = booking.toMap();
+        map['id'] = booking.id; // Add ID to map
+        return map;
+      }).toList();
+      
+      // Save to cache
+      CacheService.saveData(CacheService.bookingsBoxName, 'user_bookings_$userId', bookingMaps);
+    } catch (e) {
+      print('Error caching bookings: $e');
+    }
+  }
+
+  void _loadBookingsFromCache(String userId) {
+    try {
+      final bookingMaps = CacheService.getData<List>(
+        CacheService.bookingsBoxName, 
+        'user_bookings_$userId'
+      );
+      
+      if (bookingMaps != null && bookingMaps.isNotEmpty) {
+        _bookings = bookingMaps.map((map) {
+          final mapData = Map<String, dynamic>.from(map);
+          final id = mapData['id'] as String;
+          // Remove id from map as BookingModel.fromMap expects it as a separate parameter
+          mapData.remove('id');
+          return BookingModel.fromMap2(mapData);
+        }).toList();
+        
+        // Sort bookings by date
+        _bookings.sort((a, b) => b.bookingDate.compareTo(a.bookingDate));
+      }
+    } catch (e) {
+      print('Error loading bookings from cache: $e');
+      // If there's an error, reset to empty list
+      _bookings = [];
+    }
+  }
+
   // Get upcoming bookings
   List<BookingModel> get upcomingBookings {
     return _bookings.where((booking) => 
@@ -250,20 +303,31 @@ class BookingService extends ChangeNotifier {
     }
   }
   
-  // Fetch user bookings
+  // Fetch user bookings with offline support
   Future<void> fetchUserBookings(String userId) async {
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
-      
+
+      // Check network connectivity
+      bool isConnected = await _checkConnectivity();
+
+      if (!isConnected) {
+        // We're offline, load from cache
+        _loadBookingsFromCache(userId);
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
       // Query bookings collection for user's bookings
       QuerySnapshot snapshot = await _firestore
           .collection('bookings')
           .where('userId', isEqualTo: userId)
           .orderBy('createdAt', descending: true)
           .get();
-      
+
       // Process each booking document
       _bookings = await Future.wait(
         snapshot.docs.map((doc) async {
@@ -315,15 +379,44 @@ class BookingService extends ChangeNotifier {
       // Sort bookings by date
       _bookings.sort((a, b) => b.bookingDate.compareTo(a.bookingDate));
       
+      // Cache bookings for offline use
+      _cacheBookings(userId);
     } catch (e) {
       _error = 'Failed to load bookings: ${e.toString()}';
       print(_error);
+      
+      // If there's an error, try to load from cache as fallback
+      _loadBookingsFromCache(userId);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
-  
+
+  // Helper method to check connectivity
+  Future<bool> _checkConnectivity() async {
+    try {
+      // Try to use the ConnectivityService if available
+      if (_context != null) {
+        try {
+          final connectivityService = Provider.of<ConnectivityService>(_context!, listen: false);
+          return connectivityService.isConnected;
+        } catch (e) {
+          // If we can't get ConnectivityService, fall back to basic check
+          print('ConnectivityService not available: $e');
+        }
+      }
+      
+      // Basic connectivity check
+      final result = await Connectivity().checkConnectivity();
+      return result != ConnectivityResult.none;
+    } catch (e) {
+      print('Error checking connectivity: $e');
+      // Assume online if we can't check
+      return true;
+    }
+  }
+
   // Get booking by ID
   Future<BookingModel?> getBookingById(String bookingId) async {
     try {
@@ -476,7 +569,7 @@ class BookingService extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Cancel a booking
   Future<bool> cancelBooking(String bookingId) async {
     try {

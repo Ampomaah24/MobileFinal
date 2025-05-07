@@ -1,4 +1,3 @@
-// lib/core/models/notification_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum NotificationType {
@@ -35,7 +34,7 @@ class NotificationModel {
     this.additionalData,
   });
 
-  // Factory method to create a NotificationModel from a Firestore document
+  
   factory NotificationModel.fromMap(String id, Map<String, dynamic> data) {
     return NotificationModel(
       id: id,

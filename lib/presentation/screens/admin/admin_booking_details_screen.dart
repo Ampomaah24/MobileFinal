@@ -389,13 +389,13 @@ class _AdminBookingDetailsScreenState extends State<AdminBookingDetailsScreen> {
             _buildDetailRow(
               Icons.payment,
               'Payment Method',
-              'Credit Card', // This would come from your actual data
+              'Credit Card', 
             ),
             const SizedBox(height: 8),
             _buildDetailRow(
               Icons.check_circle,
               'Payment Status',
-              'Paid', // This would come from your actual data
+              'Paid', 
             ),
           ],
         ),
@@ -438,10 +438,7 @@ class _AdminBookingDetailsScreenState extends State<AdminBookingDetailsScreen> {
             icon: const Icon(Icons.email),
             label: const Text('Email Customer'),
             onPressed: () {
-              // Implement email sending functionality
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Email functionality not implemented')),
-              );
+      
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -454,10 +451,7 @@ class _AdminBookingDetailsScreenState extends State<AdminBookingDetailsScreen> {
             icon: const Icon(Icons.print),
             label: const Text('Print Details'),
             onPressed: () {
-              // Implement print functionality
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Print functionality not implemented')),
-              );
+         
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12),

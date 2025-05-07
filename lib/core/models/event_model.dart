@@ -47,7 +47,7 @@ class LocationModel {
             : const GeoPoint(0, 0),
       );
     } catch (e) {
-      // Fallback for incompatible types
+      
       print('Error converting location: $e');
       return LocationModel(
         name: 'Unknown',
@@ -71,7 +71,7 @@ class EventModel {
   final String title;
   final String description;
   final DateTime date;
-  final dynamic _location; // Store original location
+  final dynamic _location; 
   final String category;
   final double price;
   final String imageUrl;
@@ -116,7 +116,7 @@ class EventModel {
       title: title,
       description: description,
       date: date,
-      location: location, // Store original location
+      location: location, 
       category: category,
       price: price,
       imageUrl: imageUrl,

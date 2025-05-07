@@ -5,6 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/event_service.dart';
 import '../../../core/services/location_service.dart';
@@ -75,6 +78,35 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       }
     }
   }
+Future<void> _downloadMapImage() async {
+  if (_event == null) return;
+
+  final lat = _event!.location.geopoint.latitude;
+  final lng = _event!.location.geopoint.longitude;
+  final url = Uri.parse(
+    'https://maps.googleapis.com/maps/api/staticmap'
+    '?center=$lat,$lng&zoom=15&size=600x400&markers=color:red%7Clabel:E%7C$lat,$lng&key=AIzaSyCPHQDG-WWZvehWnrpSlQAssPAHPUw2pmM'
+  );
+
+  try {
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final dir = await getTemporaryDirectory();
+      final filePath = '${dir.path}/event_map_${_event!.id}.png';
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+
+      // Share or open the image
+      await Share.shareXFiles([XFile(filePath)], text: 'Event location map for ${_event!.title}');
+    } else {
+      throw Exception('Failed to download map image.');
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to download map: $e')),
+    );
+  }
+}
 
   Future<void> _checkFavoriteStatus(String eventId) async {
     final authService = Provider.of<AuthService>(context, listen: false);

@@ -1,4 +1,4 @@
-// lib/presentation/screens/admin/admin_bookings_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +24,10 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadBookings();
+    // Use addPostFrameCallback to ensure the widget tree is built before loading bookings
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadBookings();
+    });
   }
   
   Future<void> _loadBookings() async {
@@ -76,7 +79,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
       drawer: const AdminDrawer(currentIndex: 3),
       body: Column(
         children: [
-          // Search and filter bar
+       
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -265,7 +268,6 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen> {
   }
   
   void _showBookingDetails(BookingModel booking) {
-    // Navigate to booking details screen
     Navigator.push(
       context,
       MaterialPageRoute(

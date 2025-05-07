@@ -130,7 +130,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
         ),
         const SizedBox(height: 24),
 
-        // Removed: Revenue Trends chart
+      
 
         _buildRevenueMetricCard(
           title: 'Average Transaction Value',
@@ -187,7 +187,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
         ),
         const SizedBox(height: 24),
 
-        // Removed: Booking Trends chart
+        
 
         _buildBookingMetricsCard(
           title: 'Conversion Rate',

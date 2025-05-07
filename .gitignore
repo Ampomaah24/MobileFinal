@@ -60,3 +60,9 @@ app.*.map.json
 
 # Firebase debug
 firebase-debug.log
+build/
+android/app/build/
+ios/build/
+*.apk
+*.bin
+*.dSYM

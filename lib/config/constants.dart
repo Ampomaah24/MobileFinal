@@ -19,13 +19,13 @@ class AppConstants {
   static const String ticketsPath = 'tickets';
   
   // Default values
-  static const int defaultSearchRadius = 25; // km
+  static const int defaultSearchRadius = 25; 
   static const int maxSearchResults = 50;
-  static const int defaultCacheTime = 15; // minutes
+  static const int defaultCacheTime = 15; 
   
-  // API keys (consider using env variables or secure storage in production)
-  static const String googleMapsApiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
-  static const String stripePublishableKey = 'YOUR_STRIPE_PUBLISHABLE_KEY';
+  // API keys 
+  static const String googleMapsApiKey = 'AIzaSyCPHQDG-WWZvehWnrpSlQAssPAHPUw2pmM';
+  
   
   // Pagination
   static const int eventsPerPage = 10;

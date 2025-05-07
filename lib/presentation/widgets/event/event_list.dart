@@ -37,7 +37,7 @@ class EventList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // If events list is provided, use it; otherwise get it from the EventService
+    
     final eventList = events ?? Provider.of<EventService>(context).filteredEvents;
     final isLoading = showLoading || Provider.of<EventService>(context).isLoading;
 

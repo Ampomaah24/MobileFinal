@@ -150,15 +150,6 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Show dialog to add new user
-          _showAddUserDialog(userService);
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        child: const Icon(Icons.person_add),
-        tooltip: 'Add New User',
-      ),
     );
   }
   
@@ -317,29 +308,28 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
           Text(
             _searchQuery.isNotEmpty
                 ? 'Try changing your search or filters'
-                : 'Add users to get started',
+                : 'No users available',
             style: TextStyle(
               color: Colors.grey[600],
             ),
           ),
           const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: _searchQuery.isNotEmpty
-                ? () {
-                    setState(() {
-                      _searchQuery = '';
-                      _filterOption = 'All';
-                    });
-                  }
-                : () => _showAddUserDialog(Provider.of<UserService>(context, listen: false)),
-            icon: Icon(_searchQuery.isNotEmpty ? Icons.clear : Icons.person_add),
-            label: Text(_searchQuery.isNotEmpty ? 'Clear Filters' : 'Add User'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          if (_searchQuery.isNotEmpty)
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _searchQuery = '';
+                  _filterOption = 'All';
+                });
+              },
+              icon: const Icon(Icons.clear),
+              label: const Text('Clear Filters'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -413,11 +403,14 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                   color: Colors.grey[400],
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  'Joined: ${_formatDate(user.createdAt)}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
+                Expanded(
+                  child: Text(
+                    'Joined: ${_formatDate(user.createdAt)}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -553,16 +546,9 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // Show message that this functionality needs to be implemented
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Delete user functionality not implemented yet.'),
-                  backgroundColor: Colors.orange,
-                  duration: Duration(seconds: 3),
-                ),
-              );
+              await _deleteUser(user, userService);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -575,121 +561,39 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
     );
   }
   
-  void _showAddUserDialog(UserService userService) {
-    final formKey = GlobalKey<FormState>();
-    String name = '';
-    String email = '';
-    String password = '';
-    bool isAdmin = false;
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add New User'),
-        content: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a name';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    name = value ?? '';
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an email';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    email = value ?? '';
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    password = value ?? '';
-                  },
-                ),
-                const SizedBox(height: 16),
-                StatefulBuilder(
-                  builder: (context, setState) {
-                    return SwitchListTile(
-                      title: const Text('Admin User'),
-                      value: isAdmin,
-                      onChanged: (value) {
-                        setState(() {
-                          isAdmin = value;
-                        });
-                      },
-                      contentPadding: EdgeInsets.zero,
-                    );
-                  },
-                ),
-              ],
-            ),
+  Future<void> _deleteUser(UserModel user, UserService userService) async {
+    try {
+      setState(() => _isLoading = true);
+      
+      // Use the AuthService to delete the user account
+      final authService = Provider.of<AuthService>(context, listen: false);
+      
+      // Call deleteUser method - it doesn't return a value
+      await authService.deleteUser(user.uid);
+      
+      // If we get here without an exception, consider it successful
+      // Refresh the users list
+      await _loadUsers(userService);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${user.name} has been deleted successfully'),
+            backgroundColor: Colors.green,
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+        );
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error deleting user: ${e.toString()}'),
+            backgroundColor: Colors.red,
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                formKey.currentState!.save();
-                Navigator.pop(context);
-                // Show message that this functionality needs to be implemented
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Create user functionality not implemented yet.'),
-                    backgroundColor: Colors.orange,
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              }
-            },
-            child: const Text('Create User'),
-          ),
-        ],
-      ),
-    );
+        );
+      }
+    }
   }
   
   String _formatDate(DateTime? date) {

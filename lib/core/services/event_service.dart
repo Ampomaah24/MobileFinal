@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io'; // Import for File
+import 'dart:io'; 
 import '../models/event_model.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:geolocator/geolocator.dart';
+import '../services/cache_service.dart';
+import '../services/connectivity_service.dart';
+import 'package:provider/provider.dart';
 
 class EventService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final cloudinary = CloudinaryPublic('dcmsie5au', 'evently');
+  
+  // Added a build context field for provider access
+  BuildContext? _buildContext;
   
   // Original event lists
   List<EventModel> _events = [];
@@ -24,6 +30,11 @@ class EventService extends ChangeNotifier {
   
   // User position for distance calculations
   Position? _userPosition;
+  
+  // Set the build context for Provider usage
+  void setBuildContext(BuildContext context) {
+    _buildContext = context;
+  }
   
   String? get selectedCategory => _selectedCategory;
   List<EventModel> get events => _events;
@@ -44,39 +55,122 @@ class EventService extends ChangeNotifier {
     notifyListeners();
   }
   
+  // Add new methods for caching
+  void _cacheEvents() {
+    try {
+      // Convert events to Maps for storage
+      final eventMaps = _events.map((event) => event.toMap()).toList();
+      // Add IDs to the maps since they're normally not part of toMap()
+      for (int i = 0; i < _events.length; i++) {
+        eventMaps[i]['id'] = _events[i].id;
+      }
+      // Save to cache
+      CacheService.saveEvents(eventMaps);
+    } catch (e) {
+      print('Error caching events: $e');
+    }
+  }
+
+  void _loadEventsFromCache() {
+    try {
+      final eventMaps = CacheService.getEvents();
+      if (eventMaps.isNotEmpty) {
+        _events = eventMaps.map((map) {
+          final id = map['id'] as String;
+          // Remove id from map as EventModel.fromMap expects it as a separate parameter
+          map.remove('id');
+          return EventModel.fromMap(id, map);
+        }).toList();
+
+        _featuredEvents = _events.where((event) => event.featured).toList();
+        _applyFilters();
+      }
+    } catch (e) {
+      print('Error loading events from cache: $e');
+      // If there's an error loading from cache, reset to empty lists
+      _events = [];
+      _featuredEvents = [];
+      _filteredEvents = [];
+    }
+  }
+  
+  // Inside the EventService class, modify the fetchEvents method:
   Future<void> fetchEvents() async {
     try {
       _isLoading = true;
       notifyListeners();
-      
+
+      // Check if connectivity service is available in the context
+      ConnectivityService? connectivityService;
+      try {
+        // This may throw an exception if not in a provider context
+        if (_buildContext != null) {
+          connectivityService = Provider.of<ConnectivityService>(
+            _buildContext!,
+            listen: false,
+          );
+        }
+      } catch (e) {
+        // Ignore error, we'll handle as if offline
+      }
+
+      if (connectivityService == null || !connectivityService.isConnected) {
+        // We're offline, load from cache
+        _loadEventsFromCache();
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      // We're online, fetch from Firestore
       QuerySnapshot snapshot = await _firestore.collection('events').get();
       _events = snapshot.docs.map((doc) {
         return EventModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
-      
+
       _featuredEvents = _events.where((event) => event.featured).toList();
       _applyFilters();
+
+      // Cache the events for offline use
+      _cacheEvents();
     } catch (e) {
       print('Error fetching events: $e');
+      // If there's an error, try to load from cache as a fallback
+      _loadEventsFromCache();
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
-
-  // Get event by ID - Implementation for the method used in multiple places
+  
+  // Fixed getEventById method
   Future<EventModel?> getEventById(String eventId) async {
     try {
+      // Check if we already have the event in memory
+      EventModel? event;
+      try {
+        event = _events.firstWhere(
+          (e) => e.id == eventId,
+        );
+        // If found in memory, return it
+        return event;
+      } catch (e) {
+        // Not found in memory, continue to fetch from Firestore
+      }
+      
+      // Fetch from Firestore
       DocumentSnapshot doc = await _firestore.collection('events').doc(eventId).get();
+      
       if (doc.exists) {
         return EventModel.fromMap(doc.id, doc.data() as Map<String, dynamic>);
       }
+      
       return null;
     } catch (e) {
       print('Error getting event by ID: $e');
       return null;
     }
-  }
+  } 
   
   // Dashboard statistics
   Future<Map<String, dynamic>> getAdminDashboardStats() async {
