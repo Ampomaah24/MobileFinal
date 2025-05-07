@@ -12,7 +12,6 @@ import 'core/services/notification_service.dart';
 import 'core/services/payment_service.dart';
 import 'core/services/user_service.dart';
 import 'core/providers/theme_provider.dart';
-// Service imports
 import 'core/services/connectivity_service.dart';
 import 'core/services/cache_service.dart';
 import 'core/services/sync_service.dart';
@@ -43,10 +42,10 @@ void main() async {
     print("Firebase initialized successfully");
   } catch (e) {
     print("Error during initialization: $e");
-    // You should handle this error appropriately in a production app
+    
   }
   
-  // Run the app
+
   runApp(
     MultiProvider(
       providers: [

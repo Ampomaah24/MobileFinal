@@ -46,7 +46,7 @@ class _DistanceFilterDialogState extends State<DistanceFilterDialog> {
           ),
           const SizedBox(height: 16),
           
-          // Slider
+       
           Slider(
             value: _searchRadius,
             min: 1,
@@ -60,7 +60,7 @@ class _DistanceFilterDialogState extends State<DistanceFilterDialog> {
             },
           ),
           
-          // Preset chips
+          
           Wrap(
             spacing: 8,
             children: _presetDistances.map((distance) => 
@@ -78,7 +78,7 @@ class _DistanceFilterDialogState extends State<DistanceFilterDialog> {
             ).toList(),
           ),
           
-          // Location status
+       
           const SizedBox(height: 16),
           if (locationService.currentPosition == null)
             const Text(

@@ -1,4 +1,3 @@
-// This file contains app-wide constants used throughout the Evently app
 
 class AppConstants {
   // App info

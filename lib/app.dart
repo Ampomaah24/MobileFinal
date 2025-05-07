@@ -1,4 +1,4 @@
-// lib/app.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'presentation/screens/splash/splash_screen.dart';
@@ -14,7 +14,7 @@ import 'presentation/screens/profile/profile_screen.dart';
 import 'presentation/screens/home/discover_screen.dart';
 import 'presentation/screens/event/event_details_screen.dart';
 import 'presentation/screens/booking/booking_screen.dart';
-import 'presentation/screens/booking/payment_screen.dart';  // Add this import
+import 'presentation/screens/booking/payment_screen.dart'; 
 import 'config/theme.dart';
 import 'config/routes.dart';
 import 'core/services/auth_service.dart';
@@ -41,8 +41,9 @@ class EventlyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: themeProvider.themeMode, // Use theme mode from provider
-      initialRoute: '/', // Start with splash screen
+      themeMode: themeProvider.themeMode, 
+      
+      initialRoute: '/', 
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
@@ -54,7 +55,7 @@ class EventlyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/admin': (context) => const AdminDashboardScreen(),
         '/booking-history': (context) => const BookingHistoryScreen(),
-        // Other routes from AppRoutes
+      
         ...AppRoutes.routes,
       },
       // Handle routes that need parameters
@@ -70,7 +71,7 @@ class EventlyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) => BookingScreen(eventId: eventId),
             );
-          case '/payment':  // Add this case
+          case '/payment':  
             final args = settings.arguments;
             return MaterialPageRoute(
               builder: (context) => PaymentScreen(),

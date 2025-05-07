@@ -1,7 +1,7 @@
-// lib/config/routes.dart
+
 import 'package:flutter/material.dart';
 
-// Screens
+
 import '../presentation/screens/splash/splash_screen.dart';
 import '../presentation/screens/auth/login_screen.dart';
 import '../presentation/screens/auth/register_screen.dart';

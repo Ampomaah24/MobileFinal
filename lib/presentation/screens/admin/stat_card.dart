@@ -1,4 +1,4 @@
-// lib/presentation/screens/admin/widgets/stat_card.dart
+
 import 'package:flutter/material.dart';
 
 class StatCard extends StatelessWidget {

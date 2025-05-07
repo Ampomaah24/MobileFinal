@@ -299,7 +299,7 @@ class BookingCard extends StatelessWidget {
   }
 }
 
-// Booking confirmation card (used in booking confirmation screen)
+// Booking confirmation card
 class BookingConfirmationCard extends StatelessWidget {
   final BookingModel booking;
   final VoidCallback? onViewTicketsTap;
@@ -326,7 +326,7 @@ class BookingConfirmationCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Column(
         children: [
-          // Event image
+          
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: AspectRatio(

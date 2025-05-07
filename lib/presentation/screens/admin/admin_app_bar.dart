@@ -1,4 +1,4 @@
-// lib/presentation/screens/admin/widgets/admin_app_bar.dart
+
 import 'package:flutter/material.dart';
 
 class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {

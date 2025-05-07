@@ -1,4 +1,4 @@
-// lib/presentation/widgets/notification_icon.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/services/notification_service.dart';

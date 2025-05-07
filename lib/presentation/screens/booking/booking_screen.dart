@@ -1,4 +1,4 @@
-// Updated lib/presentation/screens/booking/booking_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -528,7 +528,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             
-            // Proceed to Payment button (changed from Book Now)
+            // Proceed to Payment button 
             ElevatedButton(
               onPressed: (_isProcessingBooking || !_event!.isAvailable || _event!.availableSpots < _ticketCount)
                   ? null
@@ -547,7 +547,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     )
                   : const Text(
-                      'Proceed to Payment',  // Changed text from "Book Now" to "Proceed to Payment"
+                      'Proceed to Payment',  
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

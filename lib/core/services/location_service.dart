@@ -200,10 +200,9 @@ class LocationService extends ChangeNotifier {
     notifyListeners();
   }
   
-  // Get address from coordinates (reverse geocoding)
-  // Note: This would typically use a geocoding service like Google Places API
+  
   Future<String?> getAddressFromCoordinates(double latitude, double longitude) async {
-    // This is a placeholder. In a real app, you would implement geocoding here.
+    
     return "Address lookup not implemented";
   }
 }

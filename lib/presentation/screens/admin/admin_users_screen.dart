@@ -1,4 +1,4 @@
-// lib/presentation/screens/admin/admin_users_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/auth_service.dart';
@@ -571,8 +571,7 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
       // Call deleteUser method - it doesn't return a value
       await authService.deleteUser(user.uid);
       
-      // If we get here without an exception, consider it successful
-      // Refresh the users list
+      
       await _loadUsers(userService);
       
       if (mounted) {

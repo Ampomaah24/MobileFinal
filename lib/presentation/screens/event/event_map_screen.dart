@@ -149,8 +149,7 @@ class _EventMapScreenState extends State<EventMapScreen> {
   
   // Fix event coordinates by setting them to default Accra location
   void _fixEventCoordinates(EventModel event) {
-    // This is a workaround since we can't directly modify the event model
-    // In a real app, you would update the database
+  
     print('Invalid event coordinates detected. Using default Accra coordinates.');
   }
   
@@ -203,7 +202,7 @@ class _EventMapScreenState extends State<EventMapScreen> {
     );
   }
 
-  // NEW METHOD: Open directions in Google Maps or other map app
+ 
   Future<void> _openDirections() async {
     if (_event == null) return;
     

@@ -1,4 +1,4 @@
-// lib/presentation/screens/admin/admin_settings_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/auth_service.dart';
@@ -34,12 +34,11 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
     setState(() => _isLoading = true);
     
     try {
-      // In a real app, you would fetch these settings from your backend
-      // This is just dummy implementation
+     
       await Future.delayed(const Duration(seconds: 1));
       
       setState(() {
-        // These would be set from your fetched data
+  
         _isLoading = false;
       });
     } catch (e) {
@@ -56,7 +55,7 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
     setState(() => _isLoading = true);
     
     try {
-      // In a real app, you would save these settings to your backend
+  
       await Future.delayed(const Duration(seconds: 1));
       
       ScaffoldMessenger.of(context).showSnackBar(

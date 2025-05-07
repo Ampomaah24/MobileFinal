@@ -1,4 +1,4 @@
-// lib/presentation/screens/splash/splash_screen.dart
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

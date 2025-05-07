@@ -147,7 +147,8 @@ class CustomButton extends StatelessWidget {
         );
     }
     
-    // Apply full width if needed
+    
+    
     if (fullWidth) {
       return SizedBox(
         width: double.infinity,
